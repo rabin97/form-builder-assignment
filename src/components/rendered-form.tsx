@@ -4,6 +4,7 @@ import { ParagraphQuestions } from "@/components/paragrapg-mcq-question";
 import Preview from "@/components/preview-form";
 import { Button } from "@/components/ui/button";
 import { FormType } from "@/types/form.types";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -36,6 +37,8 @@ export default function RenderedForm({
         }));
     };
 
+    const router = useRouter();
+    const [isLoading, setiIsLoading] = useState(false)
 
 
     const handleSubmit = async () => {
@@ -45,6 +48,7 @@ export default function RenderedForm({
             return;
         }
 
+        setiIsLoading(true)
         const submissionData = {
             preview: previewData,            // Includes category answers
             fillInBlanks: fillInBlanksData,  // Includes fill-in-the-blanks answers
@@ -72,9 +76,12 @@ export default function RenderedForm({
                 }
 
                 const result = await response.json();
+                router.push("/")
                 resolve("Form submitted successfully!");
             } catch (err) {
                 reject("Failed to submit the form.");
+            } finally {
+                setiIsLoading(false)
             }
         });
 
@@ -113,6 +120,7 @@ export default function RenderedForm({
                 })}
             <Button
                 onClick={handleSubmit}
+                disabled={isLoading}
                 className="px-4 py-2 mt-5"
             >
                 Submit
